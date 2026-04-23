@@ -1,25 +1,25 @@
 FROM node:22-alpine AS build
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm ci
+COPY package.json pnpm-lock.yaml ./
+RUN corepack enable && pnpm install --frozen-lockfile
 
 COPY tsconfig.json ./
 COPY src ./src
 COPY resources ./resources
-RUN npm run build
+RUN pnpm run build
 
 FROM node:22-alpine AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
 
-COPY package*.json ./
-RUN npm ci --omit=dev
+COPY package.json pnpm-lock.yaml ./
+RUN corepack enable && pnpm install --frozen-lockfile --prod
 
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/resources ./resources
 
-# SQLite data directory mounted by PVC in Kubernetes.
+# SQLite data directory mounted by Docker volume.
 RUN mkdir -p /app/data
 
 CMD ["node", "dist/index.js"]
