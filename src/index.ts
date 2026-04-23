@@ -1,4 +1,5 @@
 ﻿import { createClient } from './client.js';
+import { initializeDatabase } from './db/client.js';
 import { setupMessageHandler } from './handlers/message.js';
 import { setupNoticeHandler } from './handlers/notice.js';
 import { setupRequestHandler } from './handlers/request.js';
@@ -7,6 +8,7 @@ import { logger } from './utils/logger.js';
 
 async function bootstrap(): Promise<void> {
   setupErrorHandling();
+  initializeDatabase();
 
   const client = createClient();
 

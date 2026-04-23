@@ -10,7 +10,9 @@
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "start": "node dist/index.js",
-    "dev": "tsc --watch",
+    "start:dev": "tsx src/index.ts",
+    "dev": "tsx watch src/index.ts",
+    "dev:build": "tsc --watch",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "commitlint": "commitlint --from HEAD~1 --to HEAD --verbose",
@@ -20,16 +22,20 @@
     "@commitlint/cli": "^20.5.0",
     "@commitlint/config-conventional": "^20.5.0",
     "@eslint/js": "^10.0.1",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^25.6.0",
     "eslint": "^10.2.1",
     "globals": "^17.5.0",
     "husky": "^9.1.7",
+    "tsx": "^4.21.0",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.59.0"
   },
   "dependencies": {
     "@naplink/naplink": "^0.0.10",
+    "better-sqlite3": "^12.4.1",
     "dotenv": "^17.4.2",
+    "drizzle-orm": "^0.44.6",
     "winston": "^3.19.0"
   }
 }

@@ -8,6 +8,8 @@ export function setupMessageHandler(client: NapLink): void {
     const [commandName, ...args] = event.raw_message.trim().split(/\s+/);
     const command = commands.find((cmd) => cmd.name === commandName);
 
+    logger.info(JSON.stringify(event));
+
     if (!command) {
       return;
     }
@@ -17,8 +19,10 @@ export function setupMessageHandler(client: NapLink): void {
     } catch (error) {
       logger.error(`命令 ${commandName} 执行失败`, { error });
       handleError(error);
-      await client.sendGroupMessage(event.group_id, '命令执行失败，请稍后重试。');
+      await client.sendGroupMessage(
+        event.group_id,
+        '命令执行失败，请稍后重试。',
+      );
     }
   });
 }
-

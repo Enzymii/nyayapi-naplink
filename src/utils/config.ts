@@ -13,6 +13,9 @@ export const CONFIG = {
     url: process.env.NAPCAT_URL ?? 'ws://localhost:3001',
     token: process.env.NAPCAT_TOKEN,
   },
+  database: {
+    path: process.env.DATABASE_PATH ?? './data/bot.sqlite',
+  },
   bot: {
     adminIds: (process.env.ADMIN_IDS ?? '')
       .split(',')
