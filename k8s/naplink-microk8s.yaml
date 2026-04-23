@@ -1,0 +1,87 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: naplink
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: naplink-config
+  namespace: naplink
+data:
+  NAPCAT_URL: "ws://napcat:3001"
+  ADMIN_IDS: "12345,67890"
+  LOG_LEVEL: "info"
+  REPLY_STYLE: "mochun"
+  BOT_NAME: "BOT"
+  DATABASE_PATH: "/app/data/bot.sqlite"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: naplink-secret
+  namespace: naplink
+type: Opaque
+stringData:
+  NAPCAT_TOKEN: "change_me"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: naplink-data
+  namespace: naplink
+spec:
+  storageClassName: microk8s-hostpath
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: naplink-client
+  namespace: naplink
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: naplink-client
+  template:
+    metadata:
+      labels:
+        app: naplink-client
+    spec:
+      containers:
+        - name: naplink-client
+          image: ghcr.io/change-me/nyayapi-naplink:latest
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: naplink-config
+            - secretRef:
+                name: naplink-secret
+          volumeMounts:
+            - name: sqlite-data
+              mountPath: /app/data
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - pgrep -f "node dist/index.js"
+            initialDelaySeconds: 20
+            periodSeconds: 30
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - pgrep -f "node dist/index.js"
+            initialDelaySeconds: 10
+            periodSeconds: 15
+      volumes:
+        - name: sqlite-data
+          persistentVolumeClaim:
+            claimName: naplink-data
