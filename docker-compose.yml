@@ -1,11 +1,23 @@
+name: nyayapi-naplink
+
 services:
   bot:
     build:
       context: .
       dockerfile: Dockerfile
+    image: nyayapi-naplink-bot:local
     container_name: nyayapi-naplink-bot
     restart: unless-stopped
     env_file:
       - .env
+    environment:
+      DATABASE_PATH: ${DATABASE_PATH:-/app/data/bot.sqlite}
     volumes:
       - ./data:/app/data
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
