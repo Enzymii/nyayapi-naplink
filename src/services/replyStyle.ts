@@ -10,7 +10,7 @@ let cachedStyleName: string | null = null;
 let cachedTemplates: Record<string, string> = {};
 
 function getStyleFilePath(styleName: string): string {
-  return path.resolve(process.cwd(), 'replies', `${styleName}.json`);
+  return path.resolve(process.cwd(), 'resources', `${styleName}.json`);
 }
 
 function loadStyle(styleName: string): Record<string, string> {

@@ -7,7 +7,8 @@ import { renderReply } from '../services/replyStyle.js';
 import { CONFIG } from '../utils/config.js';
 
 export const jrrpTestCommand: Command<MessageEvent> = {
-  name: '/jrrp_test',
+  name: ['/jrrp_test', '.jrrp_test'],
+  enabled: CONFIG.commandsEnabled.jrrp,
   description: '今日人品',
   async execute(client: AppClient, event: MessageEvent): Promise<void> {
     const result = await getOrCreateJrrp({

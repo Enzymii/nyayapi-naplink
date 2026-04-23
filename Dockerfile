@@ -6,7 +6,7 @@ RUN npm ci
 
 COPY tsconfig.json ./
 COPY src ./src
-COPY replies ./replies
+COPY resources ./resources
 RUN npm run build
 
 FROM node:22-alpine AS runtime
@@ -17,7 +17,7 @@ COPY package*.json ./
 RUN npm ci --omit=dev
 
 COPY --from=build /app/dist ./dist
-COPY --from=build /app/replies ./replies
+COPY --from=build /app/resources ./resources
 
 # SQLite data directory mounted by PVC in Kubernetes.
 RUN mkdir -p /app/data

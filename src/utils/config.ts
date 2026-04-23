@@ -27,4 +27,10 @@ export const CONFIG = {
     name: botName,
   },
   logLevel: logLevel as 'debug' | 'info' | 'warn' | 'error' | 'off',
+
+  commandsEnabled: {
+    ping: true,
+    jrrp: true,
+    emoji: true,
+  }
 };

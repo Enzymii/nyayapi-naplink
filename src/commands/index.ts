@@ -6,8 +6,9 @@ import { logger } from '../utils/logger.js';
 import { jrrpTestCommand } from './jrrp.js';
 
 export interface Command<TEvent extends MessageEvent = MessageEvent> {
-  name: string;
+  name: string[];
   description: string;
+  enabled: boolean;
   // Defaults to true when omitted.
   isGroupCommand?: boolean;
   execute: (
@@ -29,7 +30,8 @@ export const commands: Command[] = [
   //   },
   // },
   {
-    name: '/ping',
+    name: ['/ping', '.ping'],
+    enabled: CONFIG.commandsEnabled.ping,
     description: '测试响应',
     async execute(client, event) {
       logger.info(JSON.stringify({ event }));
