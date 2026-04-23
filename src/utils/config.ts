@@ -3,6 +3,8 @@ import { config } from 'dotenv';
 config();
 
 const logLevel = process.env.LOG_LEVEL ?? 'info';
+const replyStyle = process.env.REPLY_STYLE ?? 'mochun';
+const botName = process.env.BOT_NAME ?? 'BOT';
 
 if (!['debug', 'info', 'warn', 'error', 'off'].includes(logLevel)) {
   throw new Error('LOG_LEVEL 必须是 debug/info/warn/error/off 之一');
@@ -21,6 +23,8 @@ export const CONFIG = {
       .split(',')
       .map((id) => id.trim())
       .filter(Boolean),
+    replyStyle,
+    name: botName,
   },
   logLevel: logLevel as 'debug' | 'info' | 'warn' | 'error' | 'off',
 };

@@ -1,9 +1,14 @@
-﻿import { NapLink } from '@naplink/naplink';
+﻿import { MessageEvent, NapLink } from '@naplink/naplink';
 import { CONFIG } from './utils/config.js';
 import { logger } from './utils/logger.js';
+import { reply as replyMessage } from './utils/reply.js';
 
-export function createClient(): NapLink {
-  return new NapLink({
+export interface AppClient extends NapLink {
+  reply: (event: MessageEvent, message: any) => Promise<any>;
+}
+
+export function createClient(): AppClient {
+  const client = new NapLink({
     connection: {
       url: CONFIG.napcat.url,
       token: CONFIG.napcat.token,
@@ -28,5 +33,11 @@ export function createClient(): NapLink {
       retries: 3,
     },
   });
+
+  const appClient = client as AppClient;
+  appClient.reply = (event: MessageEvent, message: any) =>
+    replyMessage(appClient, event, message);
+
+  return appClient;
 }
 
