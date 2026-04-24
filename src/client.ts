@@ -5,6 +5,15 @@ import { reply as replyMessage } from './utils/reply.js';
 
 export interface AppClient extends NapLink {
   reply: (event: MessageEvent, message: any) => Promise<any>;
+  ctx: {
+    groupRepeatState: Record<
+      string,
+      {
+        textQueue: string[];
+        lastRepeatedText: string | null;
+      }
+    >;
+  };
 }
 
 export function createClient(): AppClient {
@@ -37,6 +46,9 @@ export function createClient(): AppClient {
   const appClient = client as AppClient;
   appClient.reply = (event: MessageEvent, message: any) =>
     replyMessage(appClient, event, message);
+  appClient.ctx = {
+    groupRepeatState: {},
+  };
 
   return appClient;
 }

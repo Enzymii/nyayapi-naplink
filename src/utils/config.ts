@@ -29,8 +29,10 @@ export const CONFIG = {
   logLevel: logLevel as 'debug' | 'info' | 'warn' | 'error' | 'off',
 
   commandsEnabled: {
-    ping: true,
-    jrrp: true,
-    emoji: true,
-  }
+    ping: { enabled: true },
+    jrrp: { enabled: true },
+    emoji: { enabled: true },
+    plus1: { enabled: true, count: 4 },
+    repeatInterj: { enabled: true },    // 复读感叹词
+  },
 };

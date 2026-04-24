@@ -25,6 +25,7 @@ async function bootstrap(): Promise<void> {
   });
 
   try {
+    logger.info('正在连接 NapLink...');
     await client.connect();
     logger.info('Bot 启动成功');
   } catch (error) {
@@ -34,4 +35,3 @@ async function bootstrap(): Promise<void> {
 }
 
 void bootstrap();
-

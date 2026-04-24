@@ -31,7 +31,7 @@ export const commands: Command[] = [
   // },
   {
     name: ['/ping', '.ping'],
-    enabled: CONFIG.commandsEnabled.ping,
+    enabled: CONFIG.commandsEnabled.ping.enabled,
     description: '测试响应',
     async execute(client, event) {
       logger.info(JSON.stringify({ event }));
