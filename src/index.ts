@@ -8,7 +8,7 @@ import { logger } from './utils/logger.js';
 
 async function bootstrap(): Promise<void> {
   setupErrorHandling();
-  initializeDatabase();
+  await initializeDatabase();
 
   const client = createClient();
 
