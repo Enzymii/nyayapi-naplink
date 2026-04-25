@@ -1,4 +1,4 @@
-﻿import { MessageEvent, TextSegment } from '@naplink/naplink';
+﻿import { GroupMessageEvent, MessageEvent, TextSegment } from '@naplink/naplink';
 import type { AppClient } from '../client.js';
 import { commands } from '../commands/index.js';
 import { extractEmojiQcids } from '../services/emojiQcid.js';
@@ -14,9 +14,19 @@ export function setupMessageHandler(client: AppClient): void {
       (msg) => msg.type === 'at' && msg.data.qq === String(event.self_id),
     );
     const isGroupMessage = event.message_type === 'group';
-    logger.info(
-      JSON.stringify({ reply_message_id: replyMessageId, is_at_bot: isAtBot }),
-    );
+
+    if (
+      (CONFIG.bot.debug &&
+        isGroupMessage &&
+        !CONFIG.bot.debugWhitelist.includes(
+          String((event as GroupMessageEvent).group_id),
+        )) ||
+      (!isGroupMessage && !CONFIG.bot.adminIds.includes(String(event.user_id)))
+    ) {
+      // 调试模式下，只处理白名单群组和来自管理员的私聊消息
+      return;
+    }
+
     // 找第一个type=text的message
     const text_message = event.message.find((msg) => msg.type === 'text');
     const [commandName, ...args] = (
@@ -58,8 +68,12 @@ export function setupMessageHandler(client: AppClient): void {
         }
 
         const isPlainText = event.message.every((msg) => msg.type === 'text');
-        if (isPlainText) {  // 纯文本消息
-          const text = event.message.reduce((acc, msg) => acc + (msg as TextSegment).data.text, '');
+        if (isPlainText) {
+          // 纯文本消息
+          const text = event.message.reduce(
+            (acc, msg) => acc + (msg as TextSegment).data.text,
+            '',
+          );
           let groupState:
             | {
                 textQueue: string[];
@@ -75,7 +89,8 @@ export function setupMessageHandler(client: AppClient): void {
             };
             client.ctx.groupRepeatState[groupId] = groupState;
             groupState.textQueue.push(text);
-            if (groupState.textQueue.length > 20) {   // 保留最近20条消息
+            if (groupState.textQueue.length > 20) {
+              // 保留最近20条消息
               groupState.textQueue.shift();
             }
 

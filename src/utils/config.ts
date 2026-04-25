@@ -25,6 +25,11 @@ export const CONFIG = {
       .filter(Boolean),
     replyStyle,
     name: botName,
+    debug: process.env.DEBUG === 'true',
+    debugWhitelist: (process.env.DEBUG_WHITELIST ?? '')
+      .split(',')
+      .map((id) => id.trim())
+      .filter(Boolean),
   },
   logLevel: logLevel as 'debug' | 'info' | 'warn' | 'error' | 'off',
 

@@ -34,7 +34,7 @@ export function createClient(): AppClient {
       },
     },
     logging: {
-      level: (CONFIG.logLevel === 'off' ? 'info' : CONFIG.logLevel),
+      level: CONFIG.logLevel === 'off' ? 'info' : CONFIG.logLevel,
       logger,
     },
     api: {
@@ -45,11 +45,14 @@ export function createClient(): AppClient {
 
   const appClient = client as AppClient;
   appClient.reply = (event: MessageEvent, message: any) =>
-    replyMessage(appClient, event, message);
+    replyMessage(
+      appClient,
+      event,
+      `${CONFIG.bot.debug ? '[DEBUG]' : ''}${message}`,
+    );
   appClient.ctx = {
     groupRepeatState: {},
   };
 
   return appClient;
 }
-
