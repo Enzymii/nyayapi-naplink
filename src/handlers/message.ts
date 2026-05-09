@@ -2,6 +2,7 @@
 import type { AppClient } from '../client.js';
 import { commands } from '../commands/index.js';
 import { extractEmojiQcids } from '../services/emojiQcid.js';
+import { renderReply } from '../services/replyStyle.js';
 import { handleError } from '../utils/errorHandler.js';
 import { logger } from '../utils/logger.js';
 import { CONFIG } from '../utils/config.js';
@@ -27,27 +28,26 @@ export function setupMessageHandler(client: AppClient): void {
       return;
     }
 
-    // 找第一个type=text的message
-    const text_message = event.message.find((msg) => msg.type === 'text');
-    const [commandName, ...args] = (
-      text_message ?? { data: { text: '' } }
-    ).data.text
-      .trim()
-      .split(/\s+/);
+    // 找第一个type=text而且内容非空的message
+    const text_message = event.message.find(
+      (msg) => msg.type === 'text' && msg.data.text.trim() !== '',
+    ) as TextSegment | undefined;
+    if (!text_message) {
+      // 不包含文本消息
+      return;
+    }
+    const [commandName, ...args] = text_message.data.text.trim().split(/\s+/);
     const command = commands.find((cmd) => cmd.name.includes(commandName));
 
     if (command && (!command.isGroupCommand || isGroupMessage)) {
-      // 关于指令的处理
-      try {
-        await command.execute(client, event, args);
-      } catch (error) {
+      // 指令异步执行，不阻塞后续 message 事件；先完成的命令可先回复
+      void command.execute(client, event, args).catch((error) => {
         logger.error(`命令 ${commandName} 执行失败`, { error });
         handleError(error);
-      }
+      });
     } else {
       // 不是command就是普通消息了
       try {
-        // TODO: 处理这部分消息
         // 贴表情(需要主动@bot)
         if (
           isAtBot &&
@@ -55,16 +55,32 @@ export function setupMessageHandler(client: AppClient): void {
           commandName.startsWith('贴表情')
         ) {
           const emojis = extractEmojiQcids(event.message);
-          for (const emoji of emojis) {
-            await client.callApi('set_msg_emoji_like', {
-              message_id: replyMessageId || event.message_id,
-              emoji_id: emoji,
-              set: true,
-            });
-            // 等待0.3秒
-            await new Promise((resolve) => setTimeout(resolve, 300));
+          if (emojis.length === 0) {
+            const nickname = CONFIG.bot.name;
+            const reply = renderReply(
+              'bot.reply.emoji_like_not_found',
+              { nickname },
+              `${nickname}找不到要贴的表情喵w~`,
+            );
+            await client.reply(event, reply);
+            return;
           }
-          return; // 处理完就返回，不继续处理其他命令
+
+          const targetMessageId = replyMessageId || event.message_id;
+          void (async () => {
+            for (const emoji of emojis) {
+              await client.callApi('set_msg_emoji_like', {
+                message_id: targetMessageId,
+                emoji_id: emoji,
+                set: true,
+              });
+              await new Promise((resolve) => setTimeout(resolve, 300));
+            }
+          })().catch((error) => {
+            logger.error('贴表情失败', { error });
+            handleError(error);
+          });
+          return; // 不继续走 +1/复读；API 调用在后台顺序执行
         }
 
         const isPlainText = event.message.every((msg) => msg.type === 'text');

@@ -6,7 +6,7 @@ import { getOrCreateJrrp } from '../services/jrrp.js';
 import { renderReply } from '../services/replyStyle.js';
 import { CONFIG } from '../utils/config.js';
 
-export const jrrpTestCommand: Command<MessageEvent> = {
+export const jrrpCommand: Command<MessageEvent> = {
   name: ['/jrrp', '.jrrp'],
   enabled: CONFIG.commandsEnabled.jrrp.enabled,
   description: '今日人品',

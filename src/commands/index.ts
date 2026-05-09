@@ -2,8 +2,7 @@ import { MessageEvent } from '@naplink/naplink';
 import type { AppClient } from '../client.js';
 import { renderReply } from '../services/replyStyle.js';
 import { CONFIG } from '../utils/config.js';
-import { logger } from '../utils/logger.js';
-import { jrrpTestCommand } from './jrrp.js';
+import { jrrpCommand } from './jrrp.js';
 
 export interface Command<TEvent extends MessageEvent = MessageEvent> {
   name: string[];
@@ -34,7 +33,6 @@ export const commands: Command[] = [
     enabled: CONFIG.commandsEnabled.ping.enabled,
     description: '测试响应',
     async execute(client, event) {
-      logger.info(JSON.stringify({ event }));
       const reply = renderReply(
         'bot.reply.pong',
         {
@@ -46,5 +44,5 @@ export const commands: Command[] = [
       await client.reply(event, reply);
     },
   },
-  jrrpTestCommand,
+  jrrpCommand,
 ];
