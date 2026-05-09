@@ -1,10 +1,19 @@
 ﻿import { GroupMessageEvent, MessageEvent, TextSegment } from '@naplink/naplink';
 import type { AppClient } from '../client.js';
 import { commands } from '../commands/index.js';
+import { chatDeepSeek } from '../llm/index.js';
 import { extractEmojiQcids } from '../services/emojiQcid.js';
 import { handleError } from '../utils/errorHandler.js';
 import { logger } from '../utils/logger.js';
 import { CONFIG } from '../utils/config.js';
+
+function extractTextFromMessage(event: MessageEvent): string {
+  return event.message
+    .filter((msg): msg is TextSegment => msg.type === 'text')
+    .map((msg) => msg.data.text)
+    .join('')
+    .trim();
+}
 
 export function setupMessageHandler(client: AppClient): void {
   client.on('message', async (event: MessageEvent) => {
@@ -47,6 +56,21 @@ export function setupMessageHandler(client: AppClient): void {
     } else {
       // 不是command就是普通消息了
       try {
+        // QQ 私聊：非指令文本 → DeepSeek 示例（需配置 LLM_API_KEY）
+        if (!isGroupMessage && CONFIG.llm.enabled) {
+          const dmText = extractTextFromMessage(event);
+          if (dmText) {
+            try {
+              const answer = await chatDeepSeek(dmText);
+              await client.reply(event, answer);
+            } catch (error) {
+              logger.error('DeepSeek 私聊调用失败', { error });
+              await client.reply(event, '调用模型失败，请稍后重试或检查 LLM 配置。');
+            }
+            return;
+          }
+        }
+
         // TODO: 处理这部分消息
         // 贴表情(需要主动@bot)
         if (

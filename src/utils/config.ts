@@ -1,5 +1,7 @@
 import { config } from 'dotenv';
 
+import { LLM_CONFIG } from '../llm/config.js';
+
 config();
 
 const logLevel = process.env.LOG_LEVEL ?? 'info';
@@ -40,4 +42,7 @@ export const CONFIG = {
     plus1: { enabled: true, count: 4 },
     repeatInterj: { enabled: true },    // 复读感叹词
   },
+
+  /** 与 src/llm/config.ts 中的 LLM_CONFIG 为同一对象 */
+  llm: LLM_CONFIG,
 };
