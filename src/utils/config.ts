@@ -5,6 +5,7 @@ config();
 const logLevel = process.env.LOG_LEVEL ?? 'info';
 const replyStyle = process.env.REPLY_STYLE ?? 'mochun';
 const botName = process.env.BOT_NAME ?? 'BOT';
+const merchantEnabled = process.env.MERCHANT_ENABLED === 'true';
 
 if (!['debug', 'info', 'warn', 'error', 'off'].includes(logLevel)) {
   throw new Error('LOG_LEVEL 必须是 debug/info/warn/error/off 之一');
@@ -33,11 +34,22 @@ export const CONFIG = {
   },
   logLevel: logLevel as 'debug' | 'info' | 'warn' | 'error' | 'off',
 
+  merchant: {
+    enabled: merchantEnabled,
+    groupId: process.env.MERCHANT_GROUP_ID ?? '',
+    botQq: process.env.MERCHANT_BOT_QQ ?? '',
+  },
+  tencentOcr: {
+    secretId: process.env.TENCENT_SECRET_ID ?? '',
+    secretKey: process.env.TENCENT_SECRET_KEY ?? '',
+  },
+
   commandsEnabled: {
     ping: { enabled: true },
     jrrp: { enabled: true },
     emoji: { enabled: true },
     plus1: { enabled: true, count: 4 },
-    repeatInterj: { enabled: true },    // 复读感叹词
+    repeatInterj: { enabled: true },
+    merchantSubscribe: { enabled: merchantEnabled },
   },
 };

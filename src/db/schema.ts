@@ -21,5 +21,27 @@ export const jrrpTable = sqliteTable(
   }),
 );
 
+export const merchantFetchTable = sqliteTable('merchant_fetch', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  groupId: text('group_id').notNull(),
+  round: integer('round'),
+  products: text('products').notNull(),
+  fetchedAt: text('fetched_at').notNull(),
+});
+
+export const merchantSubscriptionTable = sqliteTable(
+  'merchant_subscription',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    userId: text('user_id').notNull(),
+    keywords: text('keywords').notNull(),
+  },
+  (table) => ({
+    userIdIdx: uniqueIndex('merchant_subscription_user_id_idx').on(table.userId),
+  }),
+);
+
 export type JrrpRecord = typeof jrrpTable.$inferSelect;
 export type NewJrrpRecord = typeof jrrpTable.$inferInsert;
+export type MerchantFetchRecord = typeof merchantFetchTable.$inferSelect;
+export type MerchantSubscriptionRecord = typeof merchantSubscriptionTable.$inferSelect;

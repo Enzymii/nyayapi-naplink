@@ -7,9 +7,13 @@ import { drizzle, type LibSQLDatabase } from 'drizzle-orm/libsql';
 
 import { CONFIG } from '../utils/config.js';
 import { logger } from '../utils/logger.js';
-import { jrrpTable } from './schema.js';
+import {
+  jrrpTable,
+  merchantFetchTable,
+  merchantSubscriptionTable,
+} from './schema.js';
 
-const schema = { jrrpTable };
+const schema = { jrrpTable, merchantFetchTable, merchantSubscriptionTable };
 
 type AppDb = LibSQLDatabase<typeof schema>;
 
@@ -78,6 +82,29 @@ export async function initializeDatabase(): Promise<void> {
         user_id,
         date
       )
+  `);
+
+  await drizzleDb.run(`
+    CREATE TABLE IF NOT EXISTS merchant_fetch (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      group_id TEXT NOT NULL,
+      round INTEGER,
+      products TEXT NOT NULL,
+      fetched_at TEXT NOT NULL
+    )
+  `);
+
+  await drizzleDb.run(`
+    CREATE TABLE IF NOT EXISTS merchant_subscription (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id TEXT NOT NULL,
+      keywords TEXT NOT NULL
+    )
+  `);
+
+  await drizzleDb.run(`
+    CREATE UNIQUE INDEX IF NOT EXISTS merchant_subscription_user_id_idx
+      ON merchant_subscription (user_id)
   `);
 
   logger.info(`SQLite 初始化完成: ${resolvedPath}`);

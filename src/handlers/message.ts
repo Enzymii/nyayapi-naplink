@@ -5,6 +5,7 @@ import { extractEmojiQcids } from '../services/emojiQcid.js';
 import { renderReply } from '../services/replyStyle.js';
 import { handleError } from '../utils/errorHandler.js';
 import { logger } from '../utils/logger.js';
+import { tryHandleMerchantResponse } from '../services/merchant/handler.js';
 import { CONFIG } from '../utils/config.js';
 
 export function setupMessageHandler(client: AppClient): void {
@@ -26,6 +27,16 @@ export function setupMessageHandler(client: AppClient): void {
     ) {
       // 调试模式下，只处理白名单群组和来自管理员的私聊消息
       return;
+    }
+
+    if (CONFIG.merchant.enabled && isGroupMessage) {
+      const handled = await tryHandleMerchantResponse(
+        client,
+        event as GroupMessageEvent,
+      );
+      if (handled) {
+        return;
+      }
     }
 
     // 找第一个type=text而且内容非空的message

@@ -3,6 +3,7 @@ import { initializeDatabase } from './db/client.js';
 import { setupMessageHandler } from './handlers/message.js';
 import { setupNoticeHandler } from './handlers/notice.js';
 import { setupRequestHandler } from './handlers/request.js';
+import { startMerchantScheduler } from './services/merchant/scheduler.js';
 import { handleError, setupErrorHandling } from './utils/errorHandler.js';
 import { logger } from './utils/logger.js';
 
@@ -27,6 +28,7 @@ async function bootstrap(): Promise<void> {
   try {
     logger.info('正在连接 NapLink...');
     await client.connect();
+    startMerchantScheduler(client);
     logger.info('Bot 启动成功');
   } catch (error) {
     handleError(error);

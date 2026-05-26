@@ -1,5 +1,7 @@
 {
   "bot.reply.jrrp": "{nickname}认为{name}今天的人品值是{jrrp}喵w~",
   "bot.reply.pong": "{nickname}在喵w~",
-  "bot.reply.emoji_like_not_found": "{nickname}找不到要贴的表情喵w~"
+  "bot.reply.emoji_like_not_found": "{nickname}找不到要贴的表情喵w~",
+  "bot.reply.merchant.subscribe": "{nickname}会在远行商人卖【{items}】的时候提醒你喵w~",
+  "bot.notice.merchant": "远行商人卖【{item}】了喵w~"
 }
