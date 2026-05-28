@@ -22,14 +22,24 @@ export const merchantSubscribeCommand: Command<MessageEvent> = {
       const current = await getMerchantSubscription(userId);
 
       if (!current || current.length === 0) {
-        await client.reply(
-          event,
-          '用法：订阅远行商人 [物品1] [物品2]\n例如：订阅远行商人 普通血脉秘药 神奇的蛋',
+        const reply = renderReply(
+          'bot.reply.merchant.noitem',
+          { nickname: CONFIG.bot.name },
+          `想让${CONFIG.bot.name}提醒你的话要告诉${CONFIG.bot.name}你需要什么喵w~`,
         );
+        await client.reply(event, reply);
         return;
       }
 
-      await client.reply(event, `当前订阅：${current.join('、')}`);
+      const reply = renderReply(
+        'bot.reply.merchant.subscribe',
+        {
+          nickname: CONFIG.bot.name,
+          items: current.join(' '),
+        },
+        `${CONFIG.bot.name}会在远行商人卖【${current.join(' ')}】的时候提醒你喵w~`,
+      );
+      await client.reply(event, reply);
       return;
     }
 
@@ -40,7 +50,7 @@ export const merchantSubscribeCommand: Command<MessageEvent> = {
         nickname: CONFIG.bot.name,
         items: keywords.join(' '),
       },
-      `${CONFIG.bot.name}会在远行商人卖${keywords.join(' ')}的时候提醒你喵w~`,
+      `${CONFIG.bot.name}会在远行商人卖【${keywords.join(' ')}】的时候提醒你喵w~`,
     );
     await client.reply(event, reply);
   },
