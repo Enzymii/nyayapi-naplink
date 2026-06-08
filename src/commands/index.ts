@@ -4,6 +4,7 @@ import { renderReply } from '../services/replyStyle.js';
 import { CONFIG } from '../utils/config.js';
 import { jrrpCommand } from './jrrp.js';
 import { merchantSubscribeCommand } from './merchantSubscribe.js';
+import { rollCommand } from './roll.js';
 
 export interface Command<TEvent extends MessageEvent = MessageEvent> {
   name: string[];
@@ -46,5 +47,6 @@ export const commands: Command[] = [
     },
   },
   jrrpCommand,
+  rollCommand,
   merchantSubscribeCommand,
 ];

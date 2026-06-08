@@ -4,5 +4,13 @@
   "bot.reply.emoji_like_not_found": "{nickname}找不到要贴的表情喵w~",
   "bot.reply.merchant.subscribe": "{nickname}会在远行商人卖【{items}】的时候提醒你喵w~",
   "bot.reply.merchant.noitem": "想让{nickname}提醒你的话要告诉{nickname}你需要什么喵w~\n比如：\"订阅远行商人 棱镜 炫彩\"喵w~",
-  "bot.notice.merchant": "远行商人卖【{item}】了喵w~"
+  "bot.notice.merchant": "远行商人卖【{item}】了喵w~",
+  "bot.reply.roll.ok": "来看看{nickname}为{name}掷出的结果喵w~\n{rolls}",
+  "bot.reply.roll.error.invalid_chars": "{nickname}不认识这个表达式喵w~",
+  "bot.reply.roll.error.unmatched_parens": "{nickname}理不清表达式里的括号了喵w~",
+  "bot.reply.roll.error.nested_dice": "{nickname}不懂掷骰嵌套要怎么算喵w~",
+  "bot.reply.roll.error.invalid_syntax": "{nickname}不认识这个表达式喵w~",
+  "bot.reply.roll.error.dice_count_out_of_range": "{nickname}拿不下这么多骰子了喵w~",
+  "bot.reply.roll.error.dice_sides_out_of_range": "{nickname}没有这么多面的骰子喵w~",
+  "bot.reply.roll.error.division_by_zero": "{nickname}觉得结果不太对劲喵w~"
 }

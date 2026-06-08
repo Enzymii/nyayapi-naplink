@@ -47,6 +47,7 @@ export const CONFIG = {
   commandsEnabled: {
     ping: { enabled: true },
     jrrp: { enabled: true },
+    roll: { enabled: true },
     emoji: { enabled: true },
     plus1: { enabled: true, count: 4 },
     repeatInterj: { enabled: true },
