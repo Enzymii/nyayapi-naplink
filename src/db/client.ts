@@ -8,13 +8,20 @@ import { drizzle, type LibSQLDatabase } from 'drizzle-orm/libsql';
 import { CONFIG } from '../utils/config.js';
 import { logger } from '../utils/logger.js';
 import {
+  chooseTable,
   diceRollTable,
   jrrpTable,
   merchantFetchTable,
   merchantSubscriptionTable,
 } from './schema.js';
 
-const schema = { diceRollTable, jrrpTable, merchantFetchTable, merchantSubscriptionTable };
+const schema = {
+  chooseTable,
+  diceRollTable,
+  jrrpTable,
+  merchantFetchTable,
+  merchantSubscriptionTable,
+};
 
 type AppDb = LibSQLDatabase<typeof schema>;
 
@@ -116,6 +123,20 @@ export async function initializeDatabase(): Promise<void> {
       group_id TEXT,
       user_id TEXT NOT NULL,
       dice TEXT NOT NULL,
+      date TEXT NOT NULL
+    )
+  `);
+
+  await drizzleDb.run(`
+    CREATE TABLE IF NOT EXISTS choose (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      adapter_type TEXT NOT NULL,
+      adapter_id TEXT NOT NULL,
+      group_id TEXT,
+      user_id TEXT NOT NULL,
+      options TEXT NOT NULL,
+      picked TEXT NOT NULL,
+      count INTEGER NOT NULL,
       date TEXT NOT NULL
     )
   `);

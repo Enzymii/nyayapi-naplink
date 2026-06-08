@@ -12,5 +12,9 @@
   "bot.reply.roll.error.invalid_syntax": "{nickname}不认识这个表达式喵w~",
   "bot.reply.roll.error.dice_count_out_of_range": "{nickname}拿不下这么多骰子了喵w~",
   "bot.reply.roll.error.dice_sides_out_of_range": "{nickname}没有这么多面的骰子喵w~",
-  "bot.reply.roll.error.division_by_zero": "{nickname}觉得结果不太对劲喵w~"
+  "bot.reply.roll.error.division_by_zero": "{nickname}觉得结果不太对劲喵w~",
+  "bot.reply.choose.ok": "{nickname}觉得{name}应该这样选喵w~\n{choices}",
+  "bot.reply.choose.error.no_options": "{nickname}不知道要选什么喵w~",
+  "bot.reply.choose.error.invalid_count": "{nickname}没法选{count}个选项喵w~",
+  "bot.reply.choose.error.too_many_options": "{nickname}看不过来这么多选项喵w~"
 }

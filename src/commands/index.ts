@@ -2,6 +2,7 @@ import { MessageEvent } from '@naplink/naplink';
 import type { AppClient } from '../client.js';
 import { renderReply } from '../services/replyStyle.js';
 import { CONFIG } from '../utils/config.js';
+import { chooseCommand } from './choose.js';
 import { jrrpCommand } from './jrrp.js';
 import { merchantSubscribeCommand } from './merchantSubscribe.js';
 import { rollCommand } from './roll.js';
@@ -48,5 +49,6 @@ export const commands: Command[] = [
   },
   jrrpCommand,
   rollCommand,
+  chooseCommand,
   merchantSubscribeCommand,
 ];
