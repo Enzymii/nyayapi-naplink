@@ -41,7 +41,19 @@ export const merchantSubscriptionTable = sqliteTable(
   }),
 );
 
+export const diceRollTable = sqliteTable('dice_roll', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  adapterType: text('adapter_type').notNull(),
+  adapterId: text('adapter_id').notNull(),
+  groupId: text('group_id'),
+  userId: text('user_id').notNull(),
+  dice: text('dice').notNull(),
+  date: text('date').notNull(),
+});
+
 export type JrrpRecord = typeof jrrpTable.$inferSelect;
 export type NewJrrpRecord = typeof jrrpTable.$inferInsert;
 export type MerchantFetchRecord = typeof merchantFetchTable.$inferSelect;
 export type MerchantSubscriptionRecord = typeof merchantSubscriptionTable.$inferSelect;
+export type DiceRollRecord = typeof diceRollTable.$inferSelect;
+export type NewDiceRollRecord = typeof diceRollTable.$inferInsert;

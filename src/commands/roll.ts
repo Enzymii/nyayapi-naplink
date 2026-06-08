@@ -1,4 +1,4 @@
-import { MessageEvent } from '@naplink/naplink';
+import { GroupMessageEvent, MessageEvent } from '@naplink/naplink';
 
 import type { AppClient } from '../client.js';
 import {
@@ -6,6 +6,7 @@ import {
   type DiceRollErrorType,
   rollDiceExpression,
 } from '../services/diceRoll.js';
+import { saveDiceRoll } from '../services/diceRollStorage.js';
 import { renderReply } from '../services/replyStyle.js';
 import { CONFIG } from '../utils/config.js';
 import type { Command } from './index.js';
@@ -37,6 +38,18 @@ export const rollCommand: Command<MessageEvent> = {
     const result = rollDiceExpression(expression);
 
     if (result.code === DICE_ROLL_CODE.OK) {
+      await saveDiceRoll(
+        {
+          adapterType: 'qq',
+          adapterId: String(event.self_id),
+          groupId:
+            event.message_type === 'group'
+              ? String((event as GroupMessageEvent).group_id)
+              : undefined,
+          userId: String(event.user_id),
+        },
+        result.rolls,
+      );
       await client.reply(event, formatRollSuccess(event, result.msg));
       return;
     }
