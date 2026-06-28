@@ -102,10 +102,7 @@ export function setupMessageHandler(client: AppClient): void {
             '',
           );
           let groupState:
-            | {
-                textQueue: string[];
-                lastRepeatedText: string | null;
-              }
+            | AppClient['ctx']['groupRepeatState'][string]
             | undefined;
           if (event.message_type === 'group') {
             const groupEvent = event as MessageEvent & { group_id: number };
@@ -115,10 +112,19 @@ export function setupMessageHandler(client: AppClient): void {
               lastRepeatedText: null,
             };
             client.ctx.groupRepeatState[groupId] = groupState;
-            groupState.textQueue.push(text);
-            if (groupState.textQueue.length > 20) {
-              // 保留最近20条消息
-              groupState.textQueue.shift();
+            const userId = String(event.user_id);
+            const lastEntry = groupState.textQueue.at(-1);
+            // 同一人连续重复消息折叠为 1 条
+            if (
+              !lastEntry ||
+              lastEntry.userId !== userId ||
+              lastEntry.text !== text
+            ) {
+              groupState.textQueue.push({ userId, text });
+              if (groupState.textQueue.length > 20) {
+                // 保留最近20条消息
+                groupState.textQueue.shift();
+              }
             }
 
             if (groupState.lastRepeatedText !== null) {
@@ -126,7 +132,9 @@ export function setupMessageHandler(client: AppClient): void {
               const recentMessages = groupState.textQueue.slice(-repeatCount);
               if (
                 recentMessages.length === repeatCount &&
-                recentMessages.every((t) => t !== groupState!.lastRepeatedText)
+                recentMessages.every(
+                  (entry) => entry.text !== groupState!.lastRepeatedText,
+                )
               ) {
                 groupState.lastRepeatedText = null;
               }
@@ -151,14 +159,16 @@ export function setupMessageHandler(client: AppClient): void {
             const repeatCount = CONFIG.commandsEnabled.plus1.count;
             // 如果最后count个元素都相同
             const lastCount = textQueue.slice(-repeatCount);
+            const repeatText = lastCount[0]?.text;
             if (
               lastCount.length === repeatCount &&
-              lastCount.every((t) => t === lastCount[0]) &&
-              groupState?.lastRepeatedText !== lastCount[0]
+              repeatText !== undefined &&
+              lastCount.every((entry) => entry.text === repeatText) &&
+              groupState?.lastRepeatedText !== repeatText
             ) {
-              await client.reply(event, lastCount[0]);
+              await client.reply(event, repeatText);
               if (groupState) {
-                groupState.lastRepeatedText = lastCount[0];
+                groupState.lastRepeatedText = repeatText;
               }
             }
           }

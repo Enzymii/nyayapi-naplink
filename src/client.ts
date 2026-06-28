@@ -3,13 +3,18 @@ import { CONFIG } from './utils/config.js';
 import { logger } from './utils/logger.js';
 import { reply as replyMessage } from './utils/reply.js';
 
+export interface GroupRepeatQueueEntry {
+  userId: string;
+  text: string;
+}
+
 export interface AppClient extends NapLink {
   reply: (event: MessageEvent, message: any) => Promise<any>;
   ctx: {
     groupRepeatState: Record<
       string,
       {
-        textQueue: string[];
+        textQueue: GroupRepeatQueueEntry[];
         lastRepeatedText: string | null;
       }
     >;
